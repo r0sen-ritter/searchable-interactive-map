@@ -9,6 +9,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import axios from 'axios';
+import './CollapsibleDrawer.css'; // Import a separate CSS file for styling
 
 interface AutocompleteResult {
   id: number;
@@ -76,6 +77,7 @@ const CollapsibleDrawer = () => {
           anchor="left"
           open={open}
           onClose={handleDrawerClose}
+          BackdropProps={{ invisible: true }}
           PaperProps={{
             style: {
               width: open ? '800px' : '300px',
@@ -107,6 +109,7 @@ const CollapsibleDrawer = () => {
           </div>
 
           <div
+            className="scroll-container"
             style={{
               height: 'calc(100% - 60px)',
               overflowY: 'auto',
@@ -114,25 +117,38 @@ const CollapsibleDrawer = () => {
               width: open ? 'calc(800px - 60px)' : 'calc(300px - 60px)',
             }}
           >
-            {autocompleteResults.map((result) => (
-              <Card
-                key={result.id}
-                style={{
-                  marginTop: '10px',
-                  width: '100%',
-                  textAlign: 'left',
-                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
-                <CardContent>
-                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{result.address}</div>
-                  <div>{result.city}</div>
-                </CardContent>
-              </Card>
-            ))}
+            {autocompleteResults.map((result) => {
+          const addressParts = result.address.split(',');
+          const firstPart = addressParts[0].trim();
+          const restOfAddress = addressParts.slice(1).join(',').trim();
+          const thana = result.area
+          const district = result.city;
+
+          return (
+            <Card
+            className="hover:brightness-90"
+              key={result.id}
+              style={{
+                marginTop: '10px',
+                width: '100%',
+                textAlign: 'left',
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
+              <CardContent>
+                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
+                <div>{restOfAddress}</div>
+                <div style={{ display: 'flex'}}>
+                      <div style={{ marginRight: '16px' }}>Thana: {thana}</div>
+                      <div>District: {district}</div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
           </div>
 
           <div>
