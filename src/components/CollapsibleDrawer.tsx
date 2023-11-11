@@ -26,10 +26,14 @@ interface AutocompleteResult {
   uCode: string;
 }
 
-const CollapsibleDrawer = () => {
+interface CollapsibleDrawerProps {
+  setAutocompleteResults: React.Dispatch<React.SetStateAction<AutocompleteResult[]>>;
+}
+
+const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteResults }) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [autocompleteResults, setAutocompleteResults] = useState<AutocompleteResult[]>([]);
+  const [autocompleteResults, setAutocompleteResultsLocal] = useState<AutocompleteResult[]>([]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -49,6 +53,7 @@ const CollapsibleDrawer = () => {
         const response = await axios.get(
           `https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=bkoi_cee68a8de9b65f29e8f2b3c9155fde46a82979717d611630b93bf6aeeb182080&q=${searchQuery}&city=dhaka&bangla=true`
         );
+        setAutocompleteResultsLocal(response.data.places);
         setAutocompleteResults(response.data.places);
       } catch (error) {
         console.error(error);
@@ -58,9 +63,10 @@ const CollapsibleDrawer = () => {
     if (searchQuery.trim() !== '') {
       fetchAutocompleteResults();
     } else {
+      setAutocompleteResultsLocal([]);
       setAutocompleteResults([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, setAutocompleteResults]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -108,47 +114,42 @@ const CollapsibleDrawer = () => {
             />
           </div>
 
-          <div
-            className="scroll-container"
-            style={{
-              height: 'calc(100% - 60px)',
-              overflowY: 'auto',
-              marginTop: '20px',
-              width: open ? 'calc(800px - 60px)' : 'calc(300px - 60px)',
-            }}
-          >
+          <div className="scroll-container" style={{ height: 'calc(100% - 60px)', overflowY: 'auto', marginTop: '20px', width: open ? 'calc(800px - 60px)' : 'calc(300px - 60px)' }}>
             {autocompleteResults.map((result) => {
-          const addressParts = result.address.split(',');
-          const firstPart = addressParts[0].trim();
-          const restOfAddress = addressParts.slice(1).join(',').trim();
-          const thana = result.area
-          const district = result.city;
+              const addressParts = result.address.split(',');
+              const firstPart = addressParts[0].trim();
+              const restOfAddress = addressParts.slice(1).join(',').trim();
+              const thana = result.area;
+              const district = result.city;
 
-          return (
-            <Card
-            className="hover:brightness-90"
-              key={result.id}
-              style={{
-                marginTop: '10px',
-                width: '100%',
-                textAlign: 'left',
-                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
-              <CardContent>
-                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
-                <div>{restOfAddress}</div>
-                <div style={{ display: 'flex'}}>
+              return (
+                <Card
+                  className="hover:brightness-90"
+                  key={result.id}
+                  onClick={() => {
+                    
+                  }}
+                  style={{
+                    marginTop: '10px',
+                    width: '100%',
+                    textAlign: 'left',
+                    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
+                  <CardContent>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
+                    <div>{restOfAddress}</div>
+                    <div style={{ display: 'flex'}}>
                       <div style={{ marginRight: '16px' }}>Thana: {thana}</div>
                       <div>District: {district}</div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <div>

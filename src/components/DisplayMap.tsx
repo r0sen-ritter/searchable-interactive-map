@@ -1,6 +1,25 @@
 import { useEffect } from 'react';
 
-const DisplayMap: React.FC = () => {
+interface AutocompleteResult {
+  id: number;
+  longitude: number;
+  latitude: number;
+  address: string;
+  address_bn: string;
+  city: string;
+  city_bn: string;
+  area: string;
+  area_bn: string;
+  postCode: number;
+  pType: string;
+  uCode: string;
+}
+
+interface DisplayMapProps {
+  autocompleteResults: AutocompleteResult[];
+}
+
+const DisplayMap: React.FC<DisplayMapProps> = ({ autocompleteResults }) => {
   useEffect(() => {
     
     const link = document.createElement('link');
@@ -25,21 +44,23 @@ const DisplayMap: React.FC = () => {
         zoom: 12,
       });
 
-     
+      
       map.on('load', () => {
-       
+        
         map.addControl(new (window as any).bkoigl.FullscreenControl());
 
         
         map.addControl(new (window as any).bkoigl.NavigationControl());
 
-       
+        
         map.addControl(new (window as any).bkoigl.ScaleControl());
 
-      
-        const marker = new (window as any).bkoigl.Marker({ draggable: true })
-          .setLngLat([90.3938010872331, 23.821600277500405])
-          .addTo(map);
+        
+        autocompleteResults.forEach((result) => {
+          new (window as any).bkoigl.Marker({ draggable: true })
+            .setLngLat([result.longitude, result.latitude])
+            .addTo(map);
+        });
       });
     };
 
@@ -48,7 +69,7 @@ const DisplayMap: React.FC = () => {
       document.head.removeChild(script);
       document.head.removeChild(link);
     };
-  }, []);
+  }, [autocompleteResults]);
 
   return <div id="map" style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}></div>;
 };
