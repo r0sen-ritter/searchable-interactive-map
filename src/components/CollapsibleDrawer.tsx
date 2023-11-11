@@ -9,7 +9,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import axios from 'axios';
-import './CollapsibleDrawer.css'; // Import a separate CSS file for styling
+import './CollapsibleDrawer.css';
 
 interface AutocompleteResult {
   id: number;

@@ -1,9 +1,12 @@
 
 import CollapsibleDrawer from './components/CollapsibleDrawer'
+import DisplayMap from './components/DisplayMap'
 
 const App = () => {
-  return (
-    <CollapsibleDrawer/> 
+  return (<>
+    <DisplayMap/>
+    <CollapsibleDrawer/>
+    </>
   )
 }
 
