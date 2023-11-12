@@ -104,7 +104,12 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
         anchor="left"
         open={open}
         onClose={handleDrawerClose}
-        BackdropProps={{ invisible: true }}
+        BackdropProps={{
+          invisible: true,
+          onClick: (event: React.MouseEvent<HTMLElement>) => {
+            event.stopPropagation();
+          },
+        }}
         PaperProps={{
           style: {
             width: open ? '800px' : '300px',
@@ -144,6 +149,7 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
             const restOfAddress = addressParts.slice(1).join(',').trim();
             const thana = result.area;
             const district = result.city;
+            const placType = result.pType;
 
             return (
               <Card
@@ -161,12 +167,15 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
               >
                 <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
                 <CardContent>
+
                   <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
-                  <div>{restOfAddress}</div>
+                  <div style={{ fontWeight: 'regular', fontSize: '15px' }}>{restOfAddress}</div>
                   <div style={{ display: 'flex'}}>
-                    <div style={{ marginRight: '16px' }}>Thana: {thana}</div>
-                    <div>District: {district}</div>
+                    <div style={{ fontWeight: 'light', fontSize: '13px', marginRight: '16px' }}>Thana: {thana}</div>
+                    <div style={{ fontWeight: 'light', fontSize: '13px' }}>District: {district}</div>
                   </div>
+                  <div style={{ fontWeight: 'bold', fontSize: '12px' }}>{placType}</div>
+                  
                 </CardContent>
               </Card>
             );
