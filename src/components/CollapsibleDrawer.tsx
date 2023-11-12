@@ -8,6 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import axios from 'axios';
 import './CollapsibleDrawer.css';
 
@@ -34,6 +35,7 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [autocompleteResults, setAutocompleteResultsLocal] = useState<AutocompleteResult[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -45,6 +47,10 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+  };
+
+  const handleDarkModeToggle = () => {
+    setDarkMode(!darkMode);
   };
 
   useEffect(() => {
@@ -68,6 +74,11 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
     }
   }, [searchQuery, setAutocompleteResults]);
 
+  const darkModeStyles = {
+    background: darkMode ? '#333' : 'white',
+    color: darkMode ? 'white' : 'black',
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1 }}>
@@ -79,86 +90,95 @@ const CollapsibleDrawer: React.FC<CollapsibleDrawerProps> = ({ setAutocompleteRe
         >
           {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
-        <Drawer
-          anchor="left"
-          open={open}
-          onClose={handleDrawerClose}
-          BackdropProps={{ invisible: true }}
-          PaperProps={{
-            style: {
-              width: open ? '800px' : '300px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            },
-          }}
+        <IconButton
+          color="inherit"
+          onClick={handleDarkModeToggle}
+          edge="start"
+          style={{ height: '40px' }}
         >
-          <div style={{ marginTop: '20px', width: '80%' }}>
-            <TextField
-              label="Search Location"
-              variant="outlined"
-              margin="dense"
-              fullWidth
-              value={searchQuery}
-              onChange={handleSearchChange}
-              InputProps={{
-                endAdornment: (
-                  <IconButton
-                    style={{ background: 'linear-gradient(90deg, #00B7D8, #00E54B)', borderRadius: '3px' }}
-                  >
-                    <SearchIcon style={{ color: 'white', width: '30px', height: '20px' }} />
-                  </IconButton>
-                ),
-              }}
-            />
-          </div>
-
-          <div className="scroll-container" style={{ height: 'calc(100% - 60px)', overflowY: 'auto', marginTop: '20px', width: open ? 'calc(800px - 60px)' : 'calc(300px - 60px)' }}>
-            {autocompleteResults.map((result) => {
-              const addressParts = result.address.split(',');
-              const firstPart = addressParts[0].trim();
-              const restOfAddress = addressParts.slice(1).join(',').trim();
-              const thana = result.area;
-              const district = result.city;
-
-              return (
-                <Card
-                  className="hover:brightness-90"
-                  key={result.id}
-                  onClick={() => {
-                    
-                  }}
-                  style={{
-                    marginTop: '10px',
-                    width: '100%',
-                    textAlign: 'left',
-                    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
-                  <CardContent>
-                    <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
-                    <div>{restOfAddress}</div>
-                    <div style={{ display: 'flex'}}>
-                      <div style={{ marginRight: '16px' }}>Thana: {thana}</div>
-                      <div>District: {district}</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-
-          <div>
-            <IconButton onClick={handleDrawerClose} style={{ height: '40px' }}>
-              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          </div>
-        </Drawer>
+          <Brightness4Icon />
+        </IconButton>
       </div>
+
+      <Drawer
+        anchor="left"
+        open={open}
+        onClose={handleDrawerClose}
+        BackdropProps={{ invisible: true }}
+        PaperProps={{
+          style: {
+            width: open ? '800px' : '300px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            ...darkModeStyles,
+          },
+        }}
+      >
+        <div style={{ marginTop: '20px', width: '80%', ...darkModeStyles }}>
+          <TextField
+            label="Search Location"
+            variant="outlined"
+            margin="dense"
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearchChange}
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  style={{ background: 'linear-gradient(90deg, #00B7D8, #00E54B)', borderRadius: '3px' }}
+                >
+                  <SearchIcon style={{ color: 'white', width: '30px', height: '20px' }} />
+                </IconButton>
+              ),
+              style: { color: darkMode ? 'white' : 'black' }
+            }}
+          />
+        </div>
+
+        <div className="scroll-container" style={{ height: 'calc(100% - 60px)', overflowY: 'auto', marginTop: '20px', width: open ? 'calc(800px - 60px)' : 'calc(300px - 60px)', ...darkModeStyles }}>
+          {autocompleteResults.map((result) => {
+            const addressParts = result.address.split(',');
+            const firstPart = addressParts[0].trim();
+            const restOfAddress = addressParts.slice(1).join(',').trim();
+            const thana = result.area;
+            const district = result.city;
+
+            return (
+              <Card
+                className="hover:brightness-90"
+                key={result.id}
+                style={{
+                  marginTop: '10px',
+                  width: '100%',
+                  textAlign: 'left',
+                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                  display: 'flex',
+                  alignItems: 'center',
+                  ...darkModeStyles,
+                }}
+              >
+                <LocationOnIcon style={{ marginLeft: '10px', color: 'black' }} />
+                <CardContent>
+                  <div style={{ fontWeight: 'bold', fontSize: '16px' }}>{firstPart}</div>
+                  <div>{restOfAddress}</div>
+                  <div style={{ display: 'flex'}}>
+                    <div style={{ marginRight: '16px' }}>Thana: {thana}</div>
+                    <div>District: {district}</div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        <div>
+          <IconButton onClick={handleDrawerClose} style={{ height: '40px' }}>
+            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </div>
+      </Drawer>
     </div>
   );
 };

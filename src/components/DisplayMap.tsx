@@ -71,7 +71,8 @@ const DisplayMap: React.FC<DisplayMapProps> = ({ autocompleteResults }) => {
     };
   }, [autocompleteResults]);
 
-  return <div id="map" style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}></div>;
+  return <div id="map" style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+  </div>;
 };
 
 export default DisplayMap;
